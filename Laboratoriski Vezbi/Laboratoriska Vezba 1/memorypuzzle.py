@@ -4,6 +4,7 @@
 # Released under a "Simplified BSD" license
 
 import random, pygame, sys
+import time
 from pygame.locals import *
 
 FPS = 30 # frames per second, the general speed of the program
@@ -12,8 +13,8 @@ WINDOWHEIGHT = 480 # size of windows' height in pixels
 REVEALSPEED = 8 # speed boxes' sliding reveals and covers
 BOXSIZE = 40 # size of box height & width in pixels
 GAPSIZE = 10 # size of gap between boxes in pixels
-BOARDWIDTH = 10 # number of columns of icons
-BOARDHEIGHT = 7 # number of rows of icons
+BOARDWIDTH = 2 # number of columns of icons
+BOARDHEIGHT = 2 # number of rows of icons
 assert (BOARDWIDTH * BOARDHEIGHT) % 2 == 0, 'Board needs to have an even number of boxes for pairs of matches.'
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * (BOXSIZE + GAPSIZE))) / 2)
 YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * (BOXSIZE + GAPSIZE))) / 2)
@@ -267,17 +268,37 @@ def startGameAnimation(board):
 
 
 def gameWonAnimation(board):
-    # flash the background color when the player has won
-    coveredBoxes = generateRevealedBoxesData(True)
-    color1 = LIGHTBGCOLOR
-    color2 = BGCOLOR
+    catImg = pygame.image.load('cat.png')
+    catx = 10
+    caty = 10
+    direction = 'right'
+    t_end = time.time() + 10 
+    while time.time() < t_end:
+    
+        DISPLAYSURF.fill(WHITE)
+        if direction == 'right':
+            catx += 5
+            if catx == 280:
+                direction = 'down'
+        elif direction == 'down':
+            caty += 5
+            if caty == 220:
+                direction = 'left'
+        elif direction == 'left':
+            catx -= 5
+            if catx == 10:
+                direction = 'up'
+        elif direction == 'up':
+            caty -= 5
+            if caty == 10:
+                direction = 'right'
 
-    for i in range(13):
-        color1, color2 = color2, color1 # swap colors
-        DISPLAYSURF.fill(color1)
-        drawBoard(board, coveredBoxes)
+        DISPLAYSURF.blit(catImg, (catx, caty))
         pygame.display.update()
-        pygame.time.wait(300)
+        pygame.time.wait(10)
+        
+    
+    
 
 
 def hasWon(revealedBoxes):
