@@ -1,15 +1,9 @@
-# This version of the game has a bug in it. See if you can figure out how to fix it.
-# http://inventwithpython.com/pygame/buggy
-# Bug Description: Graphics are messed up.
-
-
 # Memory Puzzle
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
 import random, pygame, sys
-import time
 from pygame.locals import *
 
 FPS = 30 # frames per second, the general speed of the program
@@ -18,8 +12,8 @@ WINDOWHEIGHT = 480 # size of windows' height in pixels
 REVEALSPEED = 8 # speed boxes' sliding reveals and covers
 BOXSIZE = 40 # size of box height & width in pixels
 GAPSIZE = 10 # size of gap between boxes in pixels
-BOARDWIDTH = 2 # number of columns of icons
-BOARDHEIGHT = 2 # number of rows of icons
+BOARDWIDTH = 10 # number of columns of icons
+BOARDHEIGHT = 7 # number of rows of icons
 assert (BOARDWIDTH * BOARDHEIGHT) % 2 == 0, 'Board needs to have an even number of boxes for pairs of matches.'
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * (BOXSIZE + GAPSIZE))) / 2)
 YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * (BOXSIZE + GAPSIZE))) / 2)
@@ -59,20 +53,20 @@ def main():
 
     mousex = 0 # used to store x coordinate of mouse event
     mousey = 0 # used to store y coordinate of mouse event
-    pygame.display.set_caption('Memory Game 195005')
+    pygame.display.set_caption('Memory Game')
 
     mainBoard = getRandomizedBoard()
     revealedBoxes = generateRevealedBoxesData(False)
 
-    firstSelection = (None) # stores the (x, y) of the first box clicked.
+    firstSelection = None # stores the (x, y) of the first box clicked.
 
-    DISPLAYSURF.fill(WHITE) # ПРОМЕНА
+    DISPLAYSURF.fill(BGCOLOR)
     startGameAnimation(mainBoard)
 
     while True: # main game loop
         mouseClicked = False
 
-        DISPLAYSURF.fill(WHITE) # drawing the window ПРОМЕНА
+        DISPLAYSURF.fill(BGCOLOR) # drawing the window
         drawBoard(mainBoard, revealedBoxes)
 
         for event in pygame.event.get(): # event handling loop
@@ -85,7 +79,6 @@ def main():
                 mousex, mousey = event.pos
                 mouseClicked = True
 
-        #boxx, boxy = mousex, mousey
         boxx, boxy = getBoxAtPixel(mousex, mousey)
         if boxx != None and boxy != None:
             # The mouse is currently over a box.
@@ -125,7 +118,6 @@ def main():
                     firstSelection = None # reset firstSelection variable
 
         # Redraw the screen and wait a clock tick.
-        #Fali update
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
@@ -136,7 +128,7 @@ def generateRevealedBoxesData(val):
         revealedBoxes.append([val] * BOARDHEIGHT)
     return revealedBoxes
 
-#def getRandomizeBoard():
+
 def getRandomizedBoard():
     # Get a list of every possible shape in every possible color.
     icons = []
@@ -168,10 +160,9 @@ def splitIntoGroupsOf(groupSize, theList):
         result.append(theList[i:i + groupSize])
     return result
 
+
 def leftTopCoordsOfBox(boxx, boxy):
     # Convert board coordinates to pixel coordinates
-    #left = boxx * BOXSIZE + GAPSIZE + XMARGIN
-    #top = boxy * BOXSIZE + GAPSIZE + YMARGIN
     left = boxx * (BOXSIZE + GAPSIZE) + XMARGIN
     top = boxy * (BOXSIZE + GAPSIZE) + YMARGIN
     return (left, top)
@@ -188,13 +179,12 @@ def getBoxAtPixel(x, y):
 
 
 def drawIcon(shape, color, boxx, boxy):
-    #quarter = int(BOXSIZE) # syntactic sugar
     quarter = int(BOXSIZE * 0.25) # syntactic sugar
     half =    int(BOXSIZE * 0.5)  # syntactic sugar
 
     left, top = leftTopCoordsOfBox(boxx, boxy) # get pixel coords from board coords
     # Draw the shapes
-    if shape == DONUT: #rect
+    if shape == DONUT:
         pygame.draw.circle(DISPLAYSURF, color, (left + half, top + half), half - 5)
         pygame.draw.circle(DISPLAYSURF, BGCOLOR, (left + half, top + half), quarter - 5)
     elif shape == SQUARE:
@@ -202,9 +192,9 @@ def drawIcon(shape, color, boxx, boxy):
     elif shape == DIAMOND:
         pygame.draw.polygon(DISPLAYSURF, color, ((left + half, top), (left + BOXSIZE - 1, top + half), (left + half, top + BOXSIZE - 1), (left, top + half)))
     elif shape == LINES:
-        #for i in range(0, BOXSIZE, 4):
-        pygame.draw.line(DISPLAYSURF, color, (left, top ), (left , top)) #Промена
-        pygame.draw.line(DISPLAYSURF, color, (left , top + BOXSIZE - 1), (left + BOXSIZE - 1, top )) #  Промена
+        for i in range(0, BOXSIZE, 4):
+            pygame.draw.line(DISPLAYSURF, color, (left, top + i), (left + i, top))
+            pygame.draw.line(DISPLAYSURF, color, (left + i, top + BOXSIZE - 1), (left + BOXSIZE - 1, top + i))
     elif shape == OVAL:
         pygame.draw.ellipse(DISPLAYSURF, color, (left, top + quarter, BOXSIZE, half))
 
@@ -212,7 +202,6 @@ def drawIcon(shape, color, boxx, boxy):
 def getShapeAndColor(board, boxx, boxy):
     # shape value for x, y spot is stored in board[x][y][0]
     # color value for x, y spot is stored in board[x][y][1]
-    #return board[boxx][boxy][1], board[boxx][boxy][0]
     return board[boxx][boxy][0], board[boxx][boxy][1]
 
 
@@ -226,11 +215,8 @@ def drawBoxCovers(board, boxes, coverage):
         drawIcon(shape, color, box[0], box[1])
         if coverage > 0: # only draw the cover if there is an coverage
             pygame.draw.rect(DISPLAYSURF, BOXCOLOR, (left, top, coverage, BOXSIZE))
-        #pygame.display.update()
-        #FPSCLOCK.tick(FPS)
     pygame.display.update()
     FPSCLOCK.tick(FPS)
-    
 
 
 def revealBoxesAnimation(board, boxesToReveal):
@@ -281,34 +267,17 @@ def startGameAnimation(board):
 
 
 def gameWonAnimation(board):
-    catImg = pygame.image.load('cat.png')
-    catx = 10
-    caty = 10
-    direction = 'right'
-    t_end = time.time() + 10 
-    while time.time() < t_end:
-    
-        DISPLAYSURF.fill(WHITE)
-        if direction == 'right':
-            catx += 5
-            if catx == 280:
-                direction = 'down'
-        elif direction == 'down':
-            caty += 5
-            if caty == 220:
-                direction = 'left'
-        elif direction == 'left':
-            catx -= 5
-            if catx == 10:
-                direction = 'up'
-        elif direction == 'up':
-            caty -= 5
-            if caty == 10:
-                direction = 'right'
+    # flash the background color when the player has won
+    coveredBoxes = generateRevealedBoxesData(True)
+    color1 = LIGHTBGCOLOR
+    color2 = BGCOLOR
 
-        DISPLAYSURF.blit(catImg, (catx, caty))
+    for i in range(13):
+        color1, color2 = color2, color1 # swap colors
+        DISPLAYSURF.fill(color1)
+        drawBoard(board, coveredBoxes)
         pygame.display.update()
-        pygame.time.wait(10)
+        pygame.time.wait(300)
 
 
 def hasWon(revealedBoxes):
