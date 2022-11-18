@@ -139,7 +139,7 @@ def runGame():
         if newSpeed==oldSpeed:
             drawWorm(wormCoords)
         elif newSpeed==oldSpeed+5:
-            drawRedWorm(wormCoords)
+            drawAnotherColorWorm(wormCoords)
             oldSpeed+=5
         else:
             drawWorm(wormCoords)
@@ -259,7 +259,7 @@ def drawWorm(wormCoords):
         pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)
 
 #REQUIREMENT No. 6
-def drawRedWorm(wormCoords):
+def drawAnotherColorWorm(wormCoords):
     color=  random.choice([RED, GREEN, YELLOW, BLUE])
 
 
