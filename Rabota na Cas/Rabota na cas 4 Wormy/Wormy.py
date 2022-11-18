@@ -72,8 +72,9 @@ def runGame():
     yellowApple = getRandomLocation()
     # REQUIREMENT No. 5
     blueApple = getRandomLocation()
+    # REQUIREMENT No. 7
+    grayApple = getRandomLocation()
     #REQUIREMENT No. 4
-
     start = time.time()
     while True: # main game loop
 
@@ -118,6 +119,9 @@ def runGame():
                 newSpeed-=5
             else:
                 newSpeed=5
+                # REQUIREMENT No. 7
+        elif wormCoords[HEAD]['x'] == grayApple['x'] and wormCoords[HEAD]['y'] == grayApple['y']:
+            terminate()
         else:
             del wormCoords[-1] # remove worm's tail segment
 
@@ -150,6 +154,8 @@ def runGame():
         drawYellowApple(yellowApple)
         # REQUIREMENT No. 5
         drawBlueApple(blueApple)
+        # REQUIREMENT No. 7
+        drawGrayApple(grayApple)
         drawScore(len(wormCoords) - 3)
         pygame.display.update()
 #REQUIREMENT No. 4
@@ -290,6 +296,12 @@ def drawBlueApple(coord):
     y = coord['y'] * CELLSIZE
     appleYellowRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
     pygame.draw.rect(DISPLAYSURF, BLUE, appleYellowRect)
+#REQUIREMENT No. 7
+def drawGrayApple(coord):
+    x = coord['x'] * CELLSIZE
+    y = coord['y'] * CELLSIZE
+    appleGrayRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+    pygame.draw.rect(DISPLAYSURF, DARKGRAY, appleGrayRect)
 
 
 def drawGrid():
