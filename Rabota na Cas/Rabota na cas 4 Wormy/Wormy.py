@@ -8,7 +8,8 @@ import time
 
 from pygame.locals import *
 
-FPS = 15
+#REQUIREMENT No. 4
+FPS = 5
 #REQUIREMENT No. 2
 WINDOWWIDTH = 840
 #REQUIREMENT No. 2
@@ -67,7 +68,11 @@ def runGame():
     apple = getRandomLocation()
     #REQUIREMENT No. 3
     yellowApple = getRandomLocation()
+    #REQUIREMENT No. 4
+    start = time.time()
     while True: # main game loop
+
+
         for event in pygame.event.get(): # event handling loop
             if event.type == QUIT:
                 terminate()
@@ -123,7 +128,15 @@ def runGame():
         drawYellowApple(yellowApple)
         drawScore(len(wormCoords) - 3)
         pygame.display.update()
-        FPSCLOCK.tick(FPS)
+#REQUIREMENT No. 4
+        newSpeed = FPS
+        FPSCLOCK.tick(newSpeed)
+        if time.time()-start >= 30:
+            newSpeed+=5
+            start=time.time()
+
+
+
 
 def drawPressKeyMsg():
     pressKeySurf = BASICFONT.render('Press a key to play.', True, DARKGRAY)
