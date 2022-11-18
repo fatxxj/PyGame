@@ -29,6 +29,8 @@ DARKGREEN = (  0, 155,   0)
 DARKGRAY  = ( 40,  40,  40)
 #REQUIREMENT No. 3
 YELLOW = (255,255,0)
+#REQUIREMENT No. 5
+BLUE = (0,0,255)
 BGCOLOR = BLACK
 
 UP = 'up'
@@ -55,7 +57,8 @@ def main():
 
 
 def runGame():
-
+    #REQUIREMENT No. 5
+    newSpeed = FPS
     # Set a random start point.
     startx = random.randint(5, CELLWIDTH - 6)
     starty = random.randint(5, CELLHEIGHT - 6)
@@ -68,7 +71,10 @@ def runGame():
     apple = getRandomLocation()
     #REQUIREMENT No. 3
     yellowApple = getRandomLocation()
+    # REQUIREMENT No. 5
+    blueApple = getRandomLocation()
     #REQUIREMENT No. 4
+
     start = time.time()
     while True: # main game loop
 
@@ -95,7 +101,7 @@ def runGame():
             if wormBody['x'] == wormCoords[HEAD]['x'] and wormBody['y'] == wormCoords[HEAD]['y']:
                 return # game over
 
-        # check if worm has eaten an apply
+        # check if worm has eaten an apple
         if wormCoords[HEAD]['x'] == apple['x'] and wormCoords[HEAD]['y'] == apple['y']:
             # don't remove worm's tail segment
             apple = getRandomLocation() # set a new apple somewhere
@@ -105,6 +111,14 @@ def runGame():
             yellowApple = getRandomLocation()
             wormCoords.pop(0)
             del wormCoords[-1]
+            # REQUIREMENT No. 5
+        elif wormCoords[HEAD]['x'] == blueApple['x'] and wormCoords[HEAD]['y'] == blueApple['y']:
+            #newSpeed=5;
+            blueApple = getRandomLocation()
+            if newSpeed!=5:
+                newSpeed-=5
+            else:
+                newSpeed=5
         else:
             del wormCoords[-1] # remove worm's tail segment
 
@@ -126,10 +140,12 @@ def runGame():
 
 
         drawYellowApple(yellowApple)
+        # REQUIREMENT No. 5
+        drawBlueApple(blueApple)
         drawScore(len(wormCoords) - 3)
         pygame.display.update()
 #REQUIREMENT No. 4
-        newSpeed = FPS
+
         FPSCLOCK.tick(newSpeed)
         if time.time()-start >= 30:
             newSpeed+=5
@@ -246,6 +262,12 @@ def drawYellowApple(coord):
     y = coord['y'] * CELLSIZE
     appleYellowRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
     pygame.draw.rect(DISPLAYSURF, YELLOW, appleYellowRect)
+#REQUIREMENT No. 5
+def drawBlueApple(coord):
+    x = coord['x'] * CELLSIZE
+    y = coord['y'] * CELLSIZE
+    appleYellowRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+    pygame.draw.rect(DISPLAYSURF, BLUE, appleYellowRect)
 
 
 def drawGrid():
