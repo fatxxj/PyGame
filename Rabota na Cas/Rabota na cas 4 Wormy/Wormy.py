@@ -5,7 +5,6 @@
 
 import random, pygame, sys
 import time
-
 from pygame.locals import *
 
 #REQUIREMENT No. 4
@@ -134,7 +133,16 @@ def runGame():
         wormCoords.insert(0, newHead)
         DISPLAYSURF.fill(BGCOLOR)
         drawGrid()
-        drawWorm(wormCoords)
+        # REQUIREMENT No. 5
+        # REQUIREMENT No. 6
+        oldSpeed =5
+        if newSpeed==oldSpeed:
+            drawWorm(wormCoords)
+        elif newSpeed==oldSpeed+5:
+            drawRedWorm(wormCoords)
+            oldSpeed+=5
+        else:
+            drawWorm(wormCoords)
         drawApple(apple)
         #baraenj3
 
@@ -249,6 +257,19 @@ def drawWorm(wormCoords):
         pygame.draw.rect(DISPLAYSURF, DARKGREEN, wormSegmentRect)
         wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
         pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)
+
+#REQUIREMENT No. 6
+def drawRedWorm(wormCoords):
+    color=  random.choice([RED, GREEN, YELLOW, BLUE])
+
+
+    for coord in wormCoords:
+        x = coord['x'] * CELLSIZE
+        y = coord['y'] * CELLSIZE
+        wormSegmentRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+        pygame.draw.rect(DISPLAYSURF, DARKGREEN, wormSegmentRect)
+        wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
+        pygame.draw.rect(DISPLAYSURF,color , wormInnerSegmentRect)
 
 
 def drawApple(coord):
