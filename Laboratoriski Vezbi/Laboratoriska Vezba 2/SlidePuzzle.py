@@ -9,7 +9,7 @@ from pygame.locals import *
 # Create the constants (go ahead and experiment with different values)
 # BOARDWIDTH = 4  # number of columns in the board
 # BOARDHEIGHT = 4 # number of rows in the board
-# Promena za baranje 1
+# REQUIREMENT No.1
 BOARDWIDTH = 8  # number of columns in the board
 BOARDHEIGHT = 6  # number of rows in the board
 ###
@@ -68,7 +68,9 @@ def main():
         slideTo = None  # the direction, if any, a tile should slide
         msg = 'Click tile or press arrow keys to slide.'  # contains the message to show in the upper left corner.
         if mainBoard == SOLVEDBOARD:
-            msg = 'Solved!'
+            # msg = 'Solved!'
+            # REQUIREMENT No. 3
+            msg = 'You had to do {} moves. The computer could have solved it for {} moves.'.format(len(allMoves), len(solutionSeq))
 
         drawBoard(mainBoard, msg)
 
@@ -88,7 +90,8 @@ def main():
                     elif SOLVE_RECT.collidepoint(event.pos):
                         resetAnimation(mainBoard, solutionSeq + allMoves)  # clicked on Solve button
                         allMoves = []
-                    
+
+                    #REQUIREMENT NO.2
                     elif HELP_RECT.collidepoint(event.pos):
                         blankx, blanky = getBlankPosition(mainBoard)
                         if(blankx==0 and blanky!=0 and blanky!=BOARDHEIGHT):
