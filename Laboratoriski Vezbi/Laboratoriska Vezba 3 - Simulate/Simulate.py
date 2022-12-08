@@ -13,7 +13,8 @@ FLASHSPEED = 500 # in milliseconds
 FLASHDELAY = 200 # in milliseconds
 BUTTONSIZE = 200
 BUTTONGAPSIZE = 20
-TIMEOUT = 4 # seconds before game over if no button is pushed.
+#REQUIREMENT No.2
+TIMEOUT = 5 # seconds before game over if no button is pushed.
 
 #                R    G    B
 WHITE        = (255, 255, 255)
@@ -130,6 +131,15 @@ def main():
             waitingForInput = True
 
         else:
+#REQUIREMENT No.2
+# Resenie: Решение – Соодветно според барањето , TIMEOUT инициално почнува од 5 и потоа ќе се намали 2 пати се додека
+# не стигнува на 3. Тоа се реализира на начин што јас проверувам која е должината на листата pattern бидејќи тоа е
+# индикатор колку промени имаме. Ако должина на листата стигнувало на 10 тогаш TIMEOUT ќе биде 4, а додека стигнува
+# до 20 или повеке вредноста на TIMEOUT ќе се намали и ќе биде 3 и така ќе остане.
+            if len(pattern==10):
+                TIMEOUT=4
+            elif len(pattern>=20):
+                TIMEOUT=3
             # wait for the player to enter buttons
             if clickedButton and clickedButton == pattern[currentStep]:
                 # pushed the correct button
@@ -143,6 +153,7 @@ def main():
                     score += 1
                     waitingForInput = False
                     currentStep = 0 # reset back to first step
+
 
             elif (clickedButton and clickedButton != pattern[currentStep]) or (currentStep != 0 and time.time() - TIMEOUT > lastClickTime):
                 # pushed the incorrect button, or has timed out
