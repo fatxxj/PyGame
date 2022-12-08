@@ -1,21 +1,24 @@
-# Tetromino (a Tetris clone)
-# By Al Sweigart al@inventwithpython.com
-# http://inventwithpython.com/pygame
-# Released under a "Simplified BSD" license
-
 import random, time, pygame, sys
 from pygame.locals import *
+
+#REQUIREMENT No. x
 
 FPS = 25
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480
 BOXSIZE = 20
-BOARDWIDTH = 10
-BOARDHEIGHT = 20
+#REQUIREMENT No. 6
+rowsToPass = 10
+currentLevel = 1
+
+#REQUIREMENT No. 2
+BOARDWIDTH = 25
+BOARDHEIGHT = 40
 BLANK = '.'
 
 MOVESIDEWAYSFREQ = 0.15
-MOVEDOWNFREQ = 0.1
+#REQUIREMENT No. 5
+MOVEDOWNFREQ = 0.01
 
 XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
@@ -43,6 +46,18 @@ assert len(COLORS) == len(LIGHTCOLORS) # each color must have light color
 
 TEMPLATEWIDTH = 5
 TEMPLATEHEIGHT = 5
+
+#REQUIREMENT No. 3
+F_SHAPE_TEMPLATE = [['.....',
+                     '.....',
+                     '.0OO.',
+                     '.OO..',
+                     '.0...'],
+                    ['.....',
+                     '.0O0.',
+                     '..OO.',
+                     '...O.',
+                     '.....']]
 
 S_SHAPE_TEMPLATE = [['.....',
                      '.....',
@@ -145,14 +160,15 @@ T_SHAPE_TEMPLATE = [['.....',
                      '.OO..',
                      '..O..',
                      '.....']]
-
+#REQUIREMENT No. 3
 PIECES = {'S': S_SHAPE_TEMPLATE,
           'Z': Z_SHAPE_TEMPLATE,
           'J': J_SHAPE_TEMPLATE,
           'L': L_SHAPE_TEMPLATE,
           'I': I_SHAPE_TEMPLATE,
           'O': O_SHAPE_TEMPLATE,
-          'T': T_SHAPE_TEMPLATE}
+          'T': T_SHAPE_TEMPLATE,
+          'F': F_SHAPE_TEMPLATE}
 
 
 def main():
@@ -166,11 +182,12 @@ def main():
 
     showTextScreen('Tetromino')
     while True: # game loop
-        if random.randint(0, 1) == 0:
-            pygame.mixer.music.load('tetrisb.midi')
-        else:
-            pygame.mixer.music.load('tetrisc.midi')
-        pygame.mixer.music.play(-1, 0.0)
+        # REQUIREMENT No. 4
+        #if random.randint(0, 1) == 0:
+            #pygame.mixer.music.load('tetrisb.midi')
+        #else:
+            #pygame.mixer.music.load('tetrisc.midi')
+        #pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
         showTextScreen('Game Over')
@@ -353,11 +370,27 @@ def checkForQuit():
         pygame.event.post(event) # put the other KEYUP event objects back
 
 
+#REQUIREMENT No. 5 (Промените се во word документот поради тоа што треба пак да направам промени за барање 6
+
+# def calculateLevelAndFallFreq(score):
+#     # Based on the score, return the level the player is on and
+#     # how many seconds pass until a falling piece falls one space.
+#     level = int(score / 10) + 1
+#     fallFreq = 0.8 - (level * 0.02)
+#     return level, fallFreq
+
+#REQUIREMENT No. 6
+
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 10) + 1
-    fallFreq = 0.27 - (level * 0.02)
+    tempRowsToPass = rowsToPass
+    tempCurrentLevel = currentLevel
+    level = int(score / tempRowsToPass) + 1 #modified
+    if level > tempCurrentLevel: #add
+        tempCurrentLevel=level #add
+        tempRowsToPass+=2 #add
+    fallFreq = 0.8 - (level * 0.02)
     return level, fallFreq
 
 def getNewPiece():
