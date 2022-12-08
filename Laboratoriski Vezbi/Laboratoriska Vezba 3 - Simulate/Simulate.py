@@ -6,6 +6,10 @@
 import random, sys, time, pygame
 from pygame.locals import *
 
+
+
+
+
 FPS = 30
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480
@@ -14,7 +18,8 @@ FLASHDELAY = 200 # in milliseconds
 BUTTONSIZE = 200
 BUTTONGAPSIZE = 20
 #REQUIREMENT No.2
-TIMEOUT = 5 # seconds before game over if no button is pushed.
+ # seconds before game over if no button is pushed.
+TIMEOUT=5
 
 #                R    G    B
 WHITE        = (255, 255, 255)
@@ -29,7 +34,14 @@ BRIGHTYELLOW = (255, 255,   0)
 YELLOW       = (155, 155,   0)
 DARKGRAY     = ( 40,  40,  40)
 bgColor = BLACK
-
+def changeWidth(width):
+    global WINDOWWIDTH
+    WINDOWWIDTH=width
+    print(WINDOWWIDTH)
+def changeHeight(height):
+    global WINDOWHEIGHT
+    WINDOWHEIGHT=height
+    print(WINDOWHEIGHT)
 XMARGIN = int((WINDOWWIDTH - (2 * BUTTONSIZE) - BUTTONGAPSIZE) / 2)
 YMARGIN = int((WINDOWHEIGHT - (2 * BUTTONSIZE) - BUTTONGAPSIZE) / 2)
 
@@ -39,6 +51,11 @@ BLUERECT   = pygame.Rect(XMARGIN + BUTTONSIZE + BUTTONGAPSIZE, YMARGIN, BUTTONSI
 REDRECT    = pygame.Rect(XMARGIN, YMARGIN + BUTTONSIZE + BUTTONGAPSIZE, BUTTONSIZE, BUTTONSIZE)
 GREENRECT  = pygame.Rect(XMARGIN + BUTTONSIZE + BUTTONGAPSIZE, YMARGIN + BUTTONSIZE + BUTTONGAPSIZE, BUTTONSIZE, BUTTONSIZE)
 
+
+def decrement():
+    global TIMEOUT
+    TIMEOUT=TIMEOUT-1
+    print(TIMEOUT)
 def main():
     global FPSCLOCK, DISPLAYSURF, BASICFONT, BEEP1, BEEP2, BEEP3, BEEP4
 
@@ -107,14 +124,14 @@ def main():
     # иста итерација како претходниот пат и ако тоа се случило тогаш само се повикува пак random.choice за да најде
     # нова вредност и потоа истата го додавам на листата со append. На крај се додава +1 на бројот на елементи кои
     # се потребни да бидат во листата следната итерација и со тоа се постигнува решението.
-
+        nrAppends = len(pattern)+1
         if not waitingForInput:
             # play the pattern
             pygame.display.update()
             pygame.time.wait(1000)
             pattern.append(random.choice((YELLOW, BLUE, RED, GREEN)))
             firstChoice = pattern[0]
-            nrAppends = 2
+
             if len(pattern)>1:
                 pattern.clear()
                 for i in range(nrAppends):
@@ -124,7 +141,7 @@ def main():
                         pattern.append(anotherColor)
                     else:
                         pattern.append(newColor)
-                nrAppends+=1
+                    nrAppends+=1
             for button in pattern:
                 flashButtonAnimation(button)
                 pygame.time.wait(FLASHDELAY)
@@ -136,10 +153,12 @@ def main():
 # не стигнува на 3. Тоа се реализира на начин што јас проверувам која е должината на листата pattern бидејќи тоа е
 # индикатор колку промени имаме. Ако должина на листата стигнувало на 10 тогаш TIMEOUT ќе биде 4, а додека стигнува
 # до 20 или повеке вредноста на TIMEOUT ќе се намали и ќе биде 3 и така ќе остане.
-            if len(pattern==10):
-                TIMEOUT=4
-            elif len(pattern>=20):
-                TIMEOUT=3
+
+
+            if len(pattern)==3:
+                decrement()
+            elif len(pattern)>=20:
+                decrement()
             # wait for the player to enter buttons
             if clickedButton and clickedButton == pattern[currentStep]:
                 # pushed the correct button
@@ -165,6 +184,22 @@ def main():
                 score = 0
                 pygame.time.wait(1000)
                 changeBackgroundAnimation()
+
+#REQUIREMENT No.3
+#Решение – Бидејќи се бара да се додава ново поле во матрицата, соодветно јас креирав функција за додавање на само
+        # едно поле и проверувам доколку сме стигнале со должина на патерн листата до број кој е делив со 10 бес
+        # остаток и ако сме стигнати тогаш соодветно се повикуваат функциите за додавање на ново поле, за ажурирање
+        # да дисплеј и сите потребни за да го ажурираат дисплејот на екран.
+        if len(pattern)%10 == 0 : #10,20,30,40,50,60
+            changeWidth(WINDOWWIDTH+200)
+            changeHeight(WINDOWHEIGHT+200)
+            DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
+            drawButtons()
+            drawAdditionalButton()
+            DISPLAYSURF.blit(scoreSurf, scoreRect)
+            DISPLAYSURF.blit(infoSurf, infoRect)
+
+
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
@@ -224,6 +259,13 @@ def drawButtons():
     pygame.draw.rect(DISPLAYSURF, RED,    REDRECT)
     pygame.draw.rect(DISPLAYSURF, GREEN,  GREENRECT)
 
+
+def drawAdditionalButton():
+    yellowRect = pygame.draw.rect(DISPLAYSURF, YELLOW, YELLOWRECT)
+    # blueRect = pygame.draw.rect(DISPLAYSURF, BLUE,   BLUERECT)
+    # redRect = pygame.draw.rect(DISPLAYSURF, RED,    REDRECT)
+    # greenRect = pygame.draw.rect(DISPLAYSURF, GREEN,  GREENRECT)
+    #random.choice(yellowRect,blueRect, redRect,greenRect)
 
 def changeBackgroundAnimation(animationSpeed=40):
     global bgColor
