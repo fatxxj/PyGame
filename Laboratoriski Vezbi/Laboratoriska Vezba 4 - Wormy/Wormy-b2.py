@@ -3,7 +3,7 @@
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
-import random, pygame, sys
+import random, pygame, sys, time
 from pygame.locals import *
 
 FPS = 15
@@ -57,6 +57,10 @@ def runGame():
 
     # Start the apple in a random place.
     apple = getRandomLocation()
+    rect_visible = True
+    num_blinks = 0
+    rect_visible2 = True
+    num_blinks2 = 0
 
     while True: # main game loop
         for event in pygame.event.get(): # event handling loop
@@ -102,6 +106,58 @@ def runGame():
         drawGrid()
         drawWorm(wormCoords)
         drawApple(apple)
+
+        # If number of blinks is less than 3, continue blinking
+        if num_blinks < 5:
+            # Set random x and y coordinates for rectangle
+            # If rectangle is currently visible, set it to invisible
+            if rect_visible:
+                #pygame.draw.rect(DISPLAYSURF, (255, 255, 255), rect)
+                appleRect = pygame.Rect(150, 150, CELLSIZE, CELLSIZE)
+                pygame.draw.rect(DISPLAYSURF, RED, appleRect)
+                rect_visible = False
+                start_time = time.time()
+            # If rectangle is currently invisible, set it to visible
+            else:
+                appleRect = pygame.Rect(150, 150, CELLSIZE, CELLSIZE)
+                pygame.draw.rect(DISPLAYSURF, RED, appleRect)
+                rect_visible = True
+                current_time = time.time()
+                elapsed_time = current_time - start_time
+                if elapsed_time >= 5:
+                    break
+
+            # Increase number of blinks by 1
+            num_blinks += 1
+            appleRect = pygame.Rect(150, 150, CELLSIZE, CELLSIZE)
+            pygame.draw.rect(DISPLAYSURF, RED, appleRect)
+            pygame.display.update()
+
+        if num_blinks2 < 7:
+            # Set random x and y coordinates for rectangle
+            # If rectangle is currently visible, set it to invisible
+            if rect_visible2:
+                # pygame.draw.rect(DISPLAYSURF, (255, 255, 255), rect)
+                appleRect2 = pygame.Rect(150, 150, CELLSIZE, CELLSIZE)
+                pygame.draw.rect(DISPLAYSURF, GREEN, appleRect2)
+                rect_visible2 = False
+                start_time2 = time.time()
+            # If rectangle is currently invisible, set it to visible
+            else:
+                appleRect2 = pygame.Rect(150, 150, CELLSIZE, CELLSIZE)
+                pygame.draw.rect(DISPLAYSURF, GREEN, appleRect2)
+                rect_visible2 = True
+                current_time2 = time.time()
+                elapsed_time2 = current_time2 - start_time2
+                if elapsed_time2 >= 5:
+                    break
+
+            # Increase number of blinks by 1
+            num_blinks += 1
+            appleRect2 = pygame.Rect(150, 150, CELLSIZE, CELLSIZE)
+            pygame.draw.rect(DISPLAYSURF, GREEN, appleRect2)
+
+
         drawScore(len(wormCoords) - 3)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
@@ -203,6 +259,12 @@ def drawWorm(wormCoords):
 
 
 def drawApple(coord):
+    x = coord['x'] * CELLSIZE
+    y = coord['y'] * CELLSIZE
+    appleRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+    pygame.draw.rect(DISPLAYSURF, RED, appleRect)
+
+def drawNewElement(coord):
     x = coord['x'] * CELLSIZE
     y = coord['y'] * CELLSIZE
     appleRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
