@@ -2,8 +2,11 @@
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
+from timeit import default_timer as timer
 
 import random, pygame, sys
+import time
+
 from pygame.locals import *
 
 FPS = 15
@@ -48,11 +51,19 @@ def main():
 
 def runGame():
     # Set a random start point.
+    start = time.time()
+
     startx = random.randint(5, CELLWIDTH - 6)
     starty = random.randint(5, CELLHEIGHT - 6)
+    #REQUIREMENT No.1
+    newStartx = random.randint(8, CELLWIDTH - 9)
+    newStarty = random.randint(8, CELLHEIGHT - 9)
     wormCoords = [{'x': startx,     'y': starty},
                   {'x': startx - 1, 'y': starty},
                   {'x': startx - 2, 'y': starty}]
+    newWormCoords = [{'x': newStartx,     'y': newStarty},
+                  {'x': newStartx - 1, 'y': newStarty},
+                  {'x': newStartx - 2, 'y': newStarty}]
     direction = RIGHT
 
     # Start the apple in a random place.
@@ -74,12 +85,22 @@ def runGame():
                 elif event.key == K_ESCAPE:
                     terminate()
 
+        # REQUIREMENT No.1
         # check if the worm has hit itself or the edge
-        if wormCoords[HEAD]['x'] == -1 or wormCoords[HEAD]['x'] == CELLWIDTH or wormCoords[HEAD]['y'] == -1 or wormCoords[HEAD]['y'] == CELLHEIGHT:
+        if wormCoords[HEAD]['x'] == CELLWIDTH or  wormCoords[HEAD]['y'] == CELLHEIGHT:
             return # game over
         for wormBody in wormCoords[1:]:
             if wormBody['x'] == wormCoords[HEAD]['x'] and wormBody['y'] == wormCoords[HEAD]['y']:
-                return # game over
+                wormCoords.insert(0, newHead)
+
+        #REQUIREMENT No.1
+        # check if the worm has hit itself or the edge
+        if newWormCoords[HEAD]['x'] == -1 or newWormCoords[HEAD]['x'] == CELLWIDTH or newWormCoords[HEAD]['y'] == -1 or \
+                wormCoords[HEAD]['y'] == CELLHEIGHT:
+            return  # game over
+        for newWormBody in newWormCoords[1:]:
+            if newWormBody['x'] == wormCoords[HEAD]['x'] and newWormBody['y'] == wormCoords[HEAD]['y']:
+                newWormCoords.insert(0, newHead)
 
         # check if worm has eaten an apply
         if wormCoords[HEAD]['x'] == apple['x'] and wormCoords[HEAD]['y'] == apple['y']:
@@ -87,6 +108,14 @@ def runGame():
             apple = getRandomLocation() # set a new apple somewhere
         else:
             del wormCoords[-1] # remove worm's tail segment
+
+        # REQUIREMENT No.1
+        # check if worm has eaten an apply
+        if newWormCoords[HEAD]['x'] == apple['x'] and newWormCoords[HEAD]['y'] == apple['y']:
+            # don't remove worm's tail segment
+            apple = getRandomLocation() # set a new apple somewhere
+        else:
+            del newWormCoords[-1] # remove worm's tail segment
 
         # move the worm by adding a segment in the direction it is moving
         if direction == UP:
@@ -98,9 +127,28 @@ def runGame():
         elif direction == RIGHT:
             newHead = {'x': wormCoords[HEAD]['x'] + 1, 'y': wormCoords[HEAD]['y']}
         wormCoords.insert(0, newHead)
+
+        # REQUIREMENT No.1
+        # move the worm by adding a segment in the direction it is moving
+        if direction == UP:
+            newWormHead = {'x': newWormCoords[HEAD]['x'], 'y': newWormCoords[HEAD]['y'] - 1}
+        elif direction == DOWN:
+            newWormHead = {'x': newWormCoords[HEAD]['x'], 'y': newWormCoords[HEAD]['y'] + 1}
+        elif direction == LEFT:
+            newWormHead = {'x': newWormCoords[HEAD]['x'] - 1, 'y': newWormCoords[HEAD]['y']}
+        elif direction == RIGHT:
+            newWormHead = {'x': newWormCoords[HEAD]['x'] + 1, 'y': newWormCoords[HEAD]['y']}
+        newWormCoords.insert(0, newWormHead)
+
         DISPLAYSURF.fill(BGCOLOR)
         drawGrid()
         drawWorm(wormCoords)
+        # REQUIREMENT No.1
+        end = time.time()
+        if int(end)-int(start) ==  20:
+            drawNewWorm(newWormCoords)
+            pygame.display.update()
+
         drawApple(apple)
         drawScore(len(wormCoords) - 3)
         pygame.display.update()
@@ -198,6 +246,16 @@ def drawWorm(wormCoords):
         y = coord['y'] * CELLSIZE
         wormSegmentRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
         pygame.draw.rect(DISPLAYSURF, DARKGREEN, wormSegmentRect)
+        wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
+        pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)
+
+#REQUIREMENT No.1
+def drawNewWorm(wormCoords):
+    for coord in wormCoords:
+        x = coord['x'] * CELLSIZE
+        y = coord['y'] * CELLSIZE
+        wormSegmentRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+        pygame.draw.rect(DISPLAYSURF, RED, wormSegmentRect)
         wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
         pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)
 
