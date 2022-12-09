@@ -107,6 +107,7 @@ def runGame():
         drawWorm(wormCoords)
         drawApple(apple)
 
+#REQUIRMENT No.2
         # If number of blinks is less than 3, continue blinking
         if num_blinks < 5:
             # Set random x and y coordinates for rectangle
@@ -149,8 +150,7 @@ def runGame():
                 rect_visible2 = True
                 current_time2 = time.time()
                 elapsed_time2 = current_time2 - start_time2
-                if elapsed_time2 >= 5:
-                    break
+
 
             # Increase number of blinks by 1
             num_blinks += 1
