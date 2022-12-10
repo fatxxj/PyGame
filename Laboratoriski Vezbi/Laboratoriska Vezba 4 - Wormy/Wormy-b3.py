@@ -40,8 +40,9 @@ def main():
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
     pygame.display.set_caption('Wormy')
-    QUIT_SURF, QUIT_RECT = makeText('QUIT', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 100, WINDOWHEIGHT - 100)
-    NEWGAME_SURF, NEWGAME_RECT = makeText('New Game', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 140, WINDOWHEIGHT - 120)
+    #REQUIREMENT No.3
+    QUIT_SURF, QUIT_RECT = makeText('QUIT', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 80, WINDOWHEIGHT -90)
+    NEWGAME_SURF, NEWGAME_RECT = makeText('START FROM THE BEGGINING', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 300, WINDOWHEIGHT - 120)
 
     showStartScreen()
     while True:
@@ -179,6 +180,7 @@ def showGameOverScreen():
     DISPLAYSURF.blit(gameSurf, gameRect)
     DISPLAYSURF.blit(overSurf, overRect)
     drawPressKeyMsg()
+    #REQUIREMENT No.3
     DISPLAYSURF.blit(QUIT_SURF, QUIT_RECT)
     DISPLAYSURF.blit(NEWGAME_SURF, NEWGAME_RECT)
     pygame.display.update()
@@ -190,6 +192,7 @@ def showGameOverScreen():
         if checkForKeyPress():
             pygame.event.get() # clear event queue
             return
+        # REQUIREMENT No.3
         for event in pygame.event.get():
             if event.type == MOUSEBUTTONUP:
                 if QUIT_RECT.collidepoint(event.pos):
