@@ -420,12 +420,18 @@ def checkForQuit():
             terminate() # terminate if the KEYUP event was for the Esc key
         pygame.event.post(event) # put the other KEYUP event objects back
 
-
+#REQUIREMENT No.3
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
     level = int(score / 10) + 1
-    fallFreq = 0.27 - (level * 0.02)
+    fallFreq=0
+    #REQUIREMENT No.3
+    if score % 2 == 0:
+       fallFreq = 0.27 - (level*0.04)
+    else:
+        fallFreq = 0.27 + (level * 0.04)
+
     return level, fallFreq
 
 def getNewPiece():
