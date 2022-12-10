@@ -7,8 +7,8 @@ import random, pygame, sys
 from pygame.locals import *
 
 FPS = 15
-WINDOWWIDTH = 640
-WINDOWHEIGHT = 480
+WINDOWWIDTH = 940
+WINDOWHEIGHT = 780
 CELLSIZE = 20
 assert WINDOWWIDTH % CELLSIZE == 0, "Window width must be a multiple of cell size."
 assert WINDOWHEIGHT % CELLSIZE == 0, "Window height must be a multiple of cell size."
@@ -28,17 +28,20 @@ UP = 'up'
 DOWN = 'down'
 LEFT = 'left'
 RIGHT = 'right'
-
+TEXTCOLOR = WHITE
+TILECOLOR = GREEN
 HEAD = 0 # syntactic sugar: index of the worm's head
 
 def main():
-    global FPSCLOCK, DISPLAYSURF, BASICFONT
+    global FPSCLOCK, DISPLAYSURF, BASICFONT, QUIT_SURF, QUIT_RECT, NEWGAME_SURF, NEWGAME_RECT
 
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
     pygame.display.set_caption('Wormy')
+    QUIT_SURF, QUIT_RECT = makeText('QUIT', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 100, WINDOWHEIGHT - 100)
+    NEWGAME_SURF, NEWGAME_RECT = makeText('New Game', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 140, WINDOWHEIGHT - 120)
 
     showStartScreen()
     while True:
@@ -60,6 +63,7 @@ def runGame():
 
     while True: # main game loop
         for event in pygame.event.get(): # event handling loop
+
             if event.type == QUIT:
                 terminate()
             elif event.type == KEYDOWN:
@@ -111,7 +115,6 @@ def drawPressKeyMsg():
     pressKeyRect = pressKeySurf.get_rect()
     pressKeyRect.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 30)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
-
 
 def checkForKeyPress():
     if len(pygame.event.get(QUIT)) > 0:
@@ -176,14 +179,25 @@ def showGameOverScreen():
     DISPLAYSURF.blit(gameSurf, gameRect)
     DISPLAYSURF.blit(overSurf, overRect)
     drawPressKeyMsg()
+    DISPLAYSURF.blit(QUIT_SURF, QUIT_RECT)
+    DISPLAYSURF.blit(NEWGAME_SURF, NEWGAME_RECT)
     pygame.display.update()
     pygame.time.wait(500)
     checkForKeyPress() # clear out any key presses in the event queue
 
     while True:
+
         if checkForKeyPress():
             pygame.event.get() # clear event queue
             return
+        for event in pygame.event.get():
+            if event.type == MOUSEBUTTONUP:
+                if QUIT_RECT.collidepoint(event.pos):
+                    terminate()
+                if NEWGAME_RECT.collidepoint(event.pos):
+                    pygame.event.get()  # clear event queue
+                    return
+
 
 def drawScore(score):
     scoreSurf = BASICFONT.render('Score: %s' % (score), True, WHITE)
@@ -191,7 +205,12 @@ def drawScore(score):
     scoreRect.topleft = (WINDOWWIDTH - 120, 10)
     DISPLAYSURF.blit(scoreSurf, scoreRect)
 
-
+def makeText(text, color, bgcolor, top, left):
+    # create the Surface and Rect objects for some text.
+    textSurf = BASICFONT.render(text, True, color, bgcolor)
+    textRect = textSurf.get_rect()
+    textRect.topleft = (top, left)
+    return (textSurf, textRect)
 def drawWorm(wormCoords):
     for coord in wormCoords:
         x = coord['x'] * CELLSIZE
