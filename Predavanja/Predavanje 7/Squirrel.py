@@ -17,8 +17,10 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 CAMERASLACK = 90     # how far from the center the squirrel moves before moving the camera
-MOVERATE = 9         # how fast the player moves
-BOUNCERATE = 6       # how fast the player bounces (large is slower)
+#REQUIREMENT No. 2
+MOVERATE = 12         # how fast the player moves
+#REQUIREMENT No. 2
+BOUNCERATE = 9       # how fast the player bounces (large is slower)
 BOUNCEHEIGHT = 30    # how high the player bounces
 STARTSIZE = 25       # how big the player starts off
 WINSIZE = 300        # how big the player needs to be to win
