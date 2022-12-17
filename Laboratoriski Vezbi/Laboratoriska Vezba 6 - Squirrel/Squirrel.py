@@ -27,6 +27,8 @@ BOUNCERATE = 6       # how fast the player bounces (large is slower)
 BOUNCEHEIGHT = 30    # how high the player bounces
 STARTSIZE = 25       # how big the player starts off
 WINSIZE = 300        # how big the player needs to be to win
+#REQUIREMENT No. 4
+LOSTSIZE = 10        # how small the player needs to be to loose the game
 INVULNTIME = 2       # how long the player is invulnerable after being hit in seconds
 GAMEOVERTIME = 4     # how long the "game over" text stays on the screen in seconds
 MAXHEALTH = 3        # how much health the player starts with
@@ -297,11 +299,17 @@ def runGame():
 
                     elif not invulnerableMode:
                         # player is smaller and takes damage
+                        #REQUIREMENT No. 4
+                        playerObj['size'] += int((sqObj['width'] / sqObj['height']) ** 0.12) - 10
                         invulnerableMode = True
                         invulnerableStartTime = time.time()
-                        playerObj['health'] -= 1
-                        if playerObj['health'] == 0:
-                            gameOverMode = True # turn on "game over mode"
+                        # playerObj['health'] -= 1
+                        # if playerObj['health'] == 0:
+                        #     gameOverMode = True # turn on "game over mode"
+                        #     gameOverStartTime = time.time()
+                        # REQUIREMENT No. 4
+                        if playerObj['size'] < LOSTSIZE:
+                            gameOverMode = True # turn on "lost mode"
                             gameOverStartTime = time.time()
         else:
             # game is over, show "game over" text
@@ -360,6 +368,7 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
             return x, y
 
 
+#REQUIREMENT No. 3
 def makeNewSquirrel(camerax, cameray):
     sq = {}
     generalSize = random.randint(5, 25)
