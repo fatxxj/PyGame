@@ -17,19 +17,28 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 CAMERASLACK = 90     # how far from the center the squirrel moves before moving the camera
-MOVERATE = 9         # how fast the player moves
-BOUNCERATE = 6       # how fast the player bounces (large is slower)
+#REQUIREMENT No. 7
+CAMERASLACK_x_axis = 70
+CAMERASLACKY_y_axis = 60
+#REQUIREMENT No. 2
+MOVERATE = 12         # how fast the player moves
+#REQUIREMENT No. 2
+BOUNCERATE = 9       # how fast the player bounces (large is slower)
 BOUNCEHEIGHT = 30    # how high the player bounces
 STARTSIZE = 25       # how big the player starts off
 WINSIZE = 300        # how big the player needs to be to win
-INVULNTIME = 2       # how long the player is invulnerable after being hit in seconds
+#REQUIREMENT No.8
+INVULNTIME = 10       # how long the player is invulnerable after being hit in seconds
 GAMEOVERTIME = 4     # how long the "game over" text stays on the screen in seconds
 MAXHEALTH = 3        # how much health the player starts with
 
 NUMGRASS = 80        # number of grass objects in the active area
 NUMSQUIRRELS = 30    # number of squirrels in the active area
-SQUIRRELMINSPEED = 3 # slowest squirrel speed
-SQUIRRELMAXSPEED = 7 # fastest squirrel speed
+#REQUIREMENT No.9
+SQUIRRELMINSPEED = 13 # slowest squirrel speed
+#REQUIREMENT No.9
+SQUIRRELMAXSPEED = 17 # fastest squirrel speed
+#REQUIREMENT No. 6
 DIRCHANGEFREQ = 2    # % chance of direction change per frame
 LEFT = 'left'
 RIGHT = 'right'
@@ -65,7 +74,8 @@ def main():
 
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
-    pygame.display.set_icon(pygame.image.load('gameicon.png'))
+    #REQUIREMENT No.4
+    #pygame.display.set_icon(pygame.image.load('gameicon.png'))
     DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT))
     pygame.display.set_caption('Squirrel Eat Squirrel')
     BASICFONT = pygame.font.Font('freesansbold.ttf', 32)
@@ -128,6 +138,13 @@ def runGame():
         grassObjs[i]['x'] = random.randint(0, WINWIDTH)
         grassObjs[i]['y'] = random.randint(0, WINHEIGHT)
 
+    #REQUIREMENT No. 5
+    for i in range(3):
+        squirrelObjs.append(makeNewSquirrel(camerax, cameray))
+        for sObj in squirrelObjs:
+            sObj['x'] = random.randint(0, WINWIDTH)
+            sObj['y'] = random.randint(0, WINHEIGHT)
+
     while True: # main game loop
         # Check if we should turn off invulnerability
         if invulnerableMode and time.time() - invulnerableStartTime > INVULNTIME:
@@ -161,6 +178,7 @@ def runGame():
                 del squirrelObjs[i]
 
         # add more grass & squirrels if we don't have enough.
+
         while len(grassObjs) < NUMGRASS:
             grassObjs.append(makeNewGrass(camerax, cameray))
         while len(squirrelObjs) < NUMSQUIRRELS:
@@ -169,14 +187,15 @@ def runGame():
         # adjust camerax and cameray if beyond the "camera slack"
         playerCenterx = playerObj['x'] + int(playerObj['size'] / 2)
         playerCentery = playerObj['y'] + int(playerObj['size'] / 2)
-        if (camerax + HALF_WINWIDTH) - playerCenterx > CAMERASLACK:
-            camerax = playerCenterx + CAMERASLACK - HALF_WINWIDTH
-        elif playerCenterx - (camerax + HALF_WINWIDTH) > CAMERASLACK:
-            camerax = playerCenterx - CAMERASLACK - HALF_WINWIDTH
-        if (cameray + HALF_WINHEIGHT) - playerCentery > CAMERASLACK:
-            cameray = playerCentery + CAMERASLACK - HALF_WINHEIGHT
-        elif playerCentery - (cameray + HALF_WINHEIGHT) > CAMERASLACK:
-            cameray = playerCentery - CAMERASLACK - HALF_WINHEIGHT
+        #REQUIREMENT No.7
+        if (camerax + HALF_WINWIDTH) - playerCenterx > CAMERASLACK_x_axis:
+            camerax = playerCenterx + CAMERASLACK_x_axis - HALF_WINWIDTH
+        elif playerCenterx - (camerax + HALF_WINWIDTH) > CAMERASLACK_x_axis:
+            camerax = playerCenterx - CAMERASLACK_x_axis - HALF_WINWIDTH
+        if (cameray + HALF_WINHEIGHT) - playerCentery > CAMERASLACKY:
+            cameray = playerCentery + CAMERASLACKY - HALF_WINHEIGHT
+        elif playerCentery - (cameray + HALF_WINHEIGHT) > CAMERASLACKY:
+            cameray = playerCentery - CAMERASLACKY - HALF_WINHEIGHT
 
         # draw the green background
         DISPLAYSURF.fill(GRASSCOLOR)
@@ -200,7 +219,8 @@ def runGame():
 
 
         # draw the player squirrel
-        flashIsOn = round(time.time(), 1) * 10 % 2 == 1
+        #REQUIRMENT No.8
+        flashIsOn = round(time.time(), 1) * 10 % 7 == 1
         if not gameOverMode and not (invulnerableMode and flashIsOn):
             playerObj['rect'] = pygame.Rect( (playerObj['x'] - camerax,
                                               playerObj['y'] - cameray - getBounceAmount(playerObj['bounce'], BOUNCERATE, BOUNCEHEIGHT),

@@ -7,7 +7,8 @@ import random, sys, time, math, pygame
 from pygame.locals import *
 
 FPS = 30 # frames per second to update the screen
-WINWIDTH = 640 # width of the program's window, in pixels
+#REQUIREMENT No.1
+WINWIDTH = 960 # width of the program's window, in pixels
 WINHEIGHT = 480 # height in pixels
 HALF_WINWIDTH = int(WINWIDTH / 2)
 HALF_WINHEIGHT = int(WINHEIGHT / 2)
@@ -15,6 +16,10 @@ HALF_WINHEIGHT = int(WINHEIGHT / 2)
 GRASSCOLOR = (24, 255, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+
+#REQUIREMENT No. 2
+CAMERASLACK_x_axis = 70
+CAMERASLACK_y_axis = 60
 
 CAMERASLACK = 90     # how far from the center the squirrel moves before moving the camera
 MOVERATE = 9         # how fast the player moves
@@ -169,14 +174,16 @@ def runGame():
         # adjust camerax and cameray if beyond the "camera slack"
         playerCenterx = playerObj['x'] + int(playerObj['size'] / 2)
         playerCentery = playerObj['y'] + int(playerObj['size'] / 2)
-        if (camerax + HALF_WINWIDTH) - playerCenterx > CAMERASLACK:
-            camerax = playerCenterx + CAMERASLACK - HALF_WINWIDTH
-        elif playerCenterx - (camerax + HALF_WINWIDTH) > CAMERASLACK:
-            camerax = playerCenterx - CAMERASLACK - HALF_WINWIDTH
-        if (cameray + HALF_WINHEIGHT) - playerCentery > CAMERASLACK:
-            cameray = playerCentery + CAMERASLACK - HALF_WINHEIGHT
-        elif playerCentery - (cameray + HALF_WINHEIGHT) > CAMERASLACK:
-            cameray = playerCentery - CAMERASLACK - HALF_WINHEIGHT
+
+        # REQUIREMENT No. 2
+        if (camerax + HALF_WINWIDTH) - playerCenterx > CAMERASLACK_x_axis:
+            camerax = playerCenterx + CAMERASLACK_x_axis - HALF_WINWIDTH
+        elif playerCenterx - (camerax + HALF_WINWIDTH) > CAMERASLACK_x_axis:
+            camerax = playerCenterx - CAMERASLACK_x_axis - HALF_WINWIDTH
+        if (cameray + HALF_WINHEIGHT) - playerCentery > CAMERASLACK_y_axis:
+            cameray = playerCentery + CAMERASLACK_y_axis - HALF_WINHEIGHT
+        elif playerCentery - (cameray + HALF_WINHEIGHT) > CAMERASLACK_y_axis:
+            cameray = playerCentery - CAMERASLACK_y_axis - HALF_WINHEIGHT
 
         # draw the green background
         DISPLAYSURF.fill(GRASSCOLOR)
