@@ -143,7 +143,8 @@ def runGame():
         # move all the squirrels
         for sObj in squirrelObjs:
             # move the squirrel, and adjust for their bounce
-            sObj['x'] += sObj['movex']
+            #REQUIREMENT No. 3
+            #sObj['x'] += sObj['movex']
             sObj['y'] += sObj['movey']
             sObj['bounce'] += 1
             if sObj['bounce'] > sObj['bouncerate']:
@@ -376,12 +377,12 @@ def makeNewSquirrel(camerax, cameray):
     sq['width']  = (generalSize + random.randint(0, 10)) * multiplier
     sq['height'] = (generalSize + random.randint(0, 10)) * multiplier
     sq['x'], sq['y'] = getRandomOffCameraPos(camerax, cameray, sq['width'], sq['height'])
-    sq['movex'] = getRandomVelocity()
+    #sq['movex'] = getRandomVelocity()
     sq['movey'] = getRandomVelocity()
-    if sq['movex'] < 0: # squirrel is facing left
-        sq['surface'] = pygame.transform.scale(L_SQUIR_IMG, (sq['width'], sq['height']))
-    else: # squirrel is facing right
-        sq['surface'] = pygame.transform.scale(R_SQUIR_IMG, (sq['width'], sq['height']))
+    # if sq['movex'] < 0: # squirrel is facing left
+    #     sq['surface'] = pygame.transform.scale(L_SQUIR_IMG, (sq['width'], sq['height']))
+    # else: # squirrel is facing right
+    sq['surface'] = pygame.transform.scale(R_SQUIR_IMG, (sq['width'], sq['height']))
     sq['bounce'] = 0
     sq['bouncerate'] = random.randint(10, 18)
     sq['bounceheight'] = random.randint(10, 50)
