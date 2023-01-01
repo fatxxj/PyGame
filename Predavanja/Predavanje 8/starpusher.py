@@ -21,8 +21,7 @@ CAM_MOVE_SPEED = 5 # how many pixels per frame the camera moves
 
 # The percentage of outdoor tiles that have additional
 # decoration on them, such as a tree or rock.
-# REQUIREMENT No. 3
-OUTSIDE_DECORATION_PCT = 100
+OUTSIDE_DECORATION_PCT = 20
 
 BRIGHTBLUE = (  0, 170, 255)
 WHITE      = (255, 255, 255)
@@ -36,7 +35,7 @@ RIGHT = 'right'
 
 
 def main():
-    global FPSCLOCK, DISPLAYSURF, IMAGESDICT, TILEMAPPING, OUTSIDEDECOMAPPING, BASICFONT, PLAYERIMAGES, currentImage, ROCK
+    global FPSCLOCK, DISPLAYSURF, IMAGESDICT, TILEMAPPING, OUTSIDEDECOMAPPING, BASICFONT, PLAYERIMAGES, currentImage
 
     # Pygame initialization and basic set up of the global variables.
     pygame.init()
@@ -82,8 +81,6 @@ def main():
                           '2': IMAGESDICT['short tree'],
                           '3': IMAGESDICT['tall tree'],
                           '4': IMAGESDICT['ugly tree']}
-    #REQUIREMENT No. 5
-    ROCK = {'1': IMAGESDICT['rock']}
 
     # PLAYERIMAGES is a list of all possible characters the player can be.
     # currentImage is the index of the player's current player image.
@@ -106,8 +103,8 @@ def main():
     while True: # main game loop
         # Run the level to actually start playing the game:
         result = runLevel(levels, currentLevelIndex)
-# REQUIRMENT No. 4
-        if result in ('solved'):
+
+        if result in ('solved', 'next'):
             # Go to the next level.
             currentLevelIndex += 1
             if currentLevelIndex >= len(levels):
@@ -310,8 +307,6 @@ def decorateMap(mapObj, startxy):
 
             elif mapObjCopy[x][y] == ' ' and random.randint(0, 99) < OUTSIDE_DECORATION_PCT:
                 mapObjCopy[x][y] = random.choice(list(OUTSIDEDECOMAPPING.keys()))
-                #REQUIREMENT NO. 5
-                mapObjCopy[3][3] = random.choice(list(ROCK.keys()))
 
     return mapObjCopy
 
