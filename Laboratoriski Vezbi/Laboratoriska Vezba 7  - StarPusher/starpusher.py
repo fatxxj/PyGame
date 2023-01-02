@@ -32,6 +32,11 @@ UP = 'up'
 DOWN = 'down'
 LEFT = 'left'
 RIGHT = 'right'
+#REQUIREMENT No. 3
+# DOUBLE_LEFT = 'left left'
+# DOUBLE_RIGHT = 'right right'
+# DOUBLE_UP = 'up up'
+# DOUBLE_DOWN = 'down down'
 
 
 def main():
@@ -184,6 +189,7 @@ def runLevel(levels, levelNum):
         playerMoveTo = None
         keyPressed = False
 
+
         for event in pygame.event.get():  # event handling loop
             if event.type == QUIT:
                 # Player clicked the "X" at the corner of the window.
@@ -224,6 +230,16 @@ def runLevel(levels, levelNum):
                 elif event.key == K_DOWN:
                     playerMoveTo = DOWN
 
+                #REQUIREMENT No. 3
+                # elif event.key == K_q:
+                #     playerMoveTo = DOUBLE_LEFT
+                # elif event.key == K_e:
+                #     playerMoveTo = DOUBLE_RIGHT
+                # elif event.key == K_z:
+                #     playerMoveTo = DOUBLE_UP
+                # elif event.key == K_x:
+                #     playerMoveTo = DOUBLE_DOWN
+
                 # Set the camera move mode.
                 elif event.key == K_a:
                     cameraLeft = True
@@ -261,6 +277,8 @@ def runLevel(levels, levelNum):
                     cameraUp = False
                 elif event.key == K_s:
                     cameraDown = False
+
+
 
         if playerMoveTo != None and not levelIsComplete:
             # If the player pushed a key to move, make the move
@@ -414,6 +432,21 @@ def makeMove(mapObj, gameStateObj, playerMoveTo):
     elif playerMoveTo == LEFT:
         xOffset = -1
         yOffset = 0
+
+#REQUIREMENT No. 3
+    # elif playerMoveTo == DOUBLE_LEFT:
+    #     xOffset = -2
+    #     yOffset = 0
+    #
+    # elif playerMoveTo == DOUBLE_RIGHT:
+    #     xOffset = +2
+    #     yOffset = 0
+    # elif playerMoveTo == DOUBLE_UP:
+    #     xOffset = 0
+    #     yOffset = -2
+    # elif playerMoveTo == DOUBLE_DOWN:
+    #     xOffset = 0
+    #     yOffset = +2
 
     # See if the player can move in that direction.
     if isWall(mapObj, playerx + xOffset, playery + yOffset):
